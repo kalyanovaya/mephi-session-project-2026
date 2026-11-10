@@ -1,0 +1,13 @@
+NAME="RED OS"
+VERSION="8.0.3"
+PLATFORM_ID="platform:red80"
+ID="redos"
+ID_LIKE="rhel centos fedora"
+VERSION_ID="8.0.3"
+PRETTY_NAME="RED OS 8.0.3 (Standard Server Minimal)"
+ANSI_COLOR="0;31"
+CPE_NAME="cpe:/o:redos:redos:8"
+HOME_URL="https://redos.red-soft.ru"
+BUG_REPORT_URL="https://support.red-soft.ru"
+EDITION="Standard"
+

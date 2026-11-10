@@ -1,0 +1,69 @@
+GENERAL.DEVICE:                         enp0s1
+GENERAL.TYPE:                           ethernet
+GENERAL.NM-TYPE:                        NMDeviceEthernet
+GENERAL.DBUS-PATH:                      /org/freedesktop/NetworkManager/Devices/2
+GENERAL.VENDOR:                         Red Hat, Inc.
+GENERAL.PRODUCT:                        Virtio network device
+GENERAL.DRIVER:                         virtio_net
+GENERAL.DRIVER-VERSION:                 1.0.0
+GENERAL.FIRMWARE-VERSION:               --
+GENERAL.HWADDR:                         52:54:00:37:43:84
+GENERAL.MTU:                            1500
+GENERAL.STATE:                          100 (connected)
+GENERAL.REASON:                         0 (No reason given)
+GENERAL.IP4-CONNECTIVITY:               4 (full)
+GENERAL.IP6-CONNECTIVITY:               4 (full)
+GENERAL.UDI:                            /sys/devices/pci0000:00/0000:00:01.0/virtio0/net/enp0s1
+GENERAL.PATH:                           pci-0000:00:01.0
+GENERAL.IP-IFACE:                       enp0s1
+GENERAL.IS-SOFTWARE:                    no
+GENERAL.NM-MANAGED:                     yes
+GENERAL.AUTOCONNECT:                    yes
+GENERAL.FIRMWARE-MISSING:               no
+GENERAL.NM-PLUGIN-MISSING:              no
+GENERAL.PHYS-PORT-ID:                   --
+GENERAL.CONNECTION:                     enp0s1
+GENERAL.CON-UUID:                       5b73fd0b-65fd-4d1f-9a60-e1d14b323499
+GENERAL.CON-PATH:                       /org/freedesktop/NetworkManager/ActiveConnection/2
+GENERAL.METERED:                        no (guessed)
+IP4.ADDRESS[1]:                         10.0.2.15/24
+IP4.GATEWAY:                            10.0.2.2
+IP4.ROUTE[1]:                           dst = 10.0.2.0/24, nh = 0.0.0.0, mt = 100
+IP4.ROUTE[2]:                           dst = 0.0.0.0/0, nh = 10.0.2.2, mt = 100
+IP4.DNS[1]:                             10.0.2.3
+
+GENERAL.DEVICE:                         lo
+GENERAL.TYPE:                           loopback
+GENERAL.NM-TYPE:                        NMDeviceLoopback
+GENERAL.DBUS-PATH:                      /org/freedesktop/NetworkManager/Devices/1
+GENERAL.VENDOR:                         --
+GENERAL.PRODUCT:                        --
+GENERAL.DRIVER:                         unknown
+GENERAL.DRIVER-VERSION:                 --
+GENERAL.FIRMWARE-VERSION:               --
+GENERAL.HWADDR:                         00:00:00:00:00:00
+GENERAL.MTU:                            65536
+GENERAL.STATE:                          100 (connected (externally))
+GENERAL.REASON:                         0 (No reason given)
+GENERAL.IP4-CONNECTIVITY:               3 (limited)
+GENERAL.IP6-CONNECTIVITY:               3 (limited)
+GENERAL.UDI:                            /sys/devices/virtual/net/lo
+GENERAL.PATH:                           --
+GENERAL.IP-IFACE:                       lo
+GENERAL.IS-SOFTWARE:                    yes
+GENERAL.NM-MANAGED:                     yes
+GENERAL.AUTOCONNECT:                    yes
+GENERAL.FIRMWARE-MISSING:               no
+GENERAL.NM-PLUGIN-MISSING:              no
+GENERAL.PHYS-PORT-ID:                   --
+GENERAL.CONNECTION:                     lo
+GENERAL.CON-UUID:                       ded94b68-5fb2-4414-a453-73110462062c
+GENERAL.CON-PATH:                       /org/freedesktop/NetworkManager/ActiveConnection/1
+GENERAL.METERED:                        no (guessed)
+IP4.ADDRESS[1]:                         127.0.0.1/8
+IP4.GATEWAY:                            --
+connection.id:                          enp0s1
+connection.autoconnect:                 yes
+ipv4.method:                            auto
+default via 10.0.2.2 dev enp0s1 proto dhcp src 10.0.2.15 metric 100 
+10.0.2.0/24 dev enp0s1 proto kernel scope link src 10.0.2.15 metric 100 

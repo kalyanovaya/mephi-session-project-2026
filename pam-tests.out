@@ -1,0 +1,16 @@
+pamtester: Permission denied
+PASS curator1 denied by local login PAM
+pamtester: account management done.
+PASS curator1 not denied by SSH account policy
+pamtester: Permission denied
+PASS curator2 denied by local login PAM
+pamtester: account management done.
+PASS curator2 not denied by SSH account policy
+pamtester: account management done.
+PASS student allowed by local login PAM
+pamtester: account management done.
+PASS user1 allowed by local login PAM
+pamtester: account management done.
+PASS user2 allowed by local login PAM
+pamtester: account management done.
+PASS user3 allowed by local login PAM

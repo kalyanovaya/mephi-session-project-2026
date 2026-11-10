@@ -1,0 +1,13 @@
+Before reboot: 0e3bb87d-aaf0-456d-8175-bb52d46dc96a
+After reboot:  590a1eb5-a6c2-4055-a709-8689498dfdf4
+PASS: actual reboot confirmed by different boot ID
+mephi-2026.domain.local
+enp0s1:enp0s1
+lo:lo
+TARGET     SOURCE    FSTYPE OPTIONS
+/mephi-web /dev/vdb1 ext4   rw,relatime,seclabel
+enabled
+active
+Enforcing
+Hello from Student: 374383
+PASS: all assertions and functional tests completed

@@ -1,0 +1,7 @@
+ID     | Command line              | Date and time    | Action(s)      | Altered
+--------------------------------------------------------------------------------
+     5 | -q -y remove --noautoremo | 2026-11-10 08:45 | Removed        |    1  <
+     4 | -y install nginx libcap-n | 2026-11-10 08:44 | Install        |   24 > 
+     3 | -y upgrade --refresh      | 2026-11-10 08:43 | I, O, U        |  147 EE
+     2 | -y install redos-release- | 2026-11-10 08:42 | E, I           |    3  <
+     1 |                           | 2026-11-10 08:26 | Install        |  457 >E

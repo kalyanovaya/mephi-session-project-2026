@@ -1,0 +1,7 @@
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on lo, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+08:48:33.458560 IP 127.0.0.1 > 127.0.0.1: ICMP echo request, id 1, seq 1, length 64
+08:48:33.458625 IP 127.0.0.1 > 127.0.0.1: ICMP echo reply, id 1, seq 1, length 64
+2 packets captured
+4 packets received by filter
+0 packets dropped by kernel

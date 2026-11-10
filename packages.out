@@ -1,0 +1,29 @@
+nginx-1.30.4-2.red80.aarch64
+libcap-ng-utils-0.8.3-3.red80.aarch64
+tcpdump-4.99.5-1.red80.aarch64
+pamtester-0.1.2-20.red80.aarch64
+Name        : tcpdump
+Epoch       : 14
+Version     : 4.99.5
+Release     : 1.red80
+Architecture: aarch64
+Install Date: Tue Nov 10 08:45:04 2026
+Group       : Unspecified
+Size        : 1743271
+License     : BSD-3-Clause
+Signature   : RSA/SHA256, Fri Aug  1 18:32:18 2025, Key ID 0b57f167f8ac18ee
+Source RPM  : tcpdump-4.99.5-1.red80.src.rpm
+Build Date  : Wed Jul 30 13:29:17 2025
+Build Host  : buildhost2-arm-ro80.red-soft.ru
+Packager    : RED SOFT
+Vendor      : redsoft
+URL         : http://www.tcpdump.org
+Summary     : A network traffic monitoring tool
+Description :
+Tcpdump is a command-line tool for monitoring network traffic.
+Tcpdump can capture and display the packet headers on a particular
+network interface or on all interfaces.  Tcpdump can display all of
+the packet headers, or just the ones that match particular criteria.
+
+Install tcpdump if you need a program to monitor network traffic.
+redos-release 8.0.3-8.red80

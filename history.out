@@ -1,0 +1,268 @@
+    1  shopt -s lithist
+    2  set -e
+    3  {
+    4  # Run as root in an interactive Bash; retain real shell history.
+    5  export LANG=C.UTF-8 LC_ALL=C.UTF-8
+    6  mkdir -p /root/mephi-results
+    7  cd /root/mephi-results
+    8  hostnamectl set-hostname mephi-2026.domain.local
+    9  CONNECTION=$(nmcli -t -f NAME,DEVICE connection show --active | awk -F: '$2!="lo" {print $1; exit}')
+   10  nmcli connection modify "$CONNECTION" ipv4.method auto connection.autoconnect yes
+   11  ping -c 4 8.8.8.8 > ping.out
+   12  dnf -y install redos-release-identity-standard-server-minimal --allowerasing
+   13  dnf -y upgrade --refresh
+   14  dnf -y install nginx libcap-ng-utils dnf-plugins-core acl policycoreutils-python-utils libpcap git pamtester
+   15  cd /tmp
+   16  dnf download tcpdump
+   17  rpm -ivh /tmp/tcpdump-*.rpm
+   18  cd /root/mephi-results
+   19  dnf history > dnf.out
+   20  }
+   21  dnf -q -y remove --noautoremove redos-release-education
+   22  {
+   23  lsblk -o NAME,SIZE,TYPE,FSTYPE,MOUNTPOINTS
+   24  [ "$(blockdev --getsize64 /dev/vdb)" = 2147483648 ]
+   25  [ -z "$(lsblk -n -o FSTYPE /dev/vdb | tr -d '[:space:]')" ]
+   26  printf 'label: gpt\n, , L\n' | sfdisk /dev/vdb
+   27  udevadm settle
+   28  mkfs.ext4 -L MEPHI_WEB /dev/vdb1
+   29  mkdir -p /mephi-web
+   30  printf '\nLABEL=MEPHI_WEB /mephi-web ext4 defaults 0 2\n' >> /etc/fstab
+   31  systemctl daemon-reload
+   32  mount /mephi-web
+   33  groupadd developers
+   34  groupadd -g 4444 curators
+   35  useradd -m -u 5501 -g developers -s /bin/bash user1
+   36  useradd -m -u 5502 -g developers -s /bin/bash user2
+   37  useradd -m -u 5503 -g developers -s /bin/bash user3
+   38  useradd -m -g curators -s /bin/bash curator1
+   39  useradd -m -g curators -s /bin/bash curator2
+   40  mkdir -p /data/mephi-2026
+   41  chown root:developers /data/mephi-2026
+   42  chmod 2770 /data/mephi-2026
+   43  setfacl -m u::rwx,g::rwx,g:curators:r-x,m::rwx,o::--- /data/mephi-2026
+   44  setfacl -d -m u::rwx,g::rwx,g:curators:r-x,m::rwx,o::--- /data/mephi-2026
+   45  TCPDUMP=$(command -v tcpdump)
+   46  stat "$TCPDUMP" > tcpdump-before.out
+   47  getcap "$TCPDUMP" >> tcpdump-before.out
+   48  chmod u-s,g-s "$TCPDUMP"
+   49  setcap cap_net_raw,cap_net_admin=ep "$TCPDUMP"
+   50  getcap "$TCPDUMP" > getcap.out
+   51  printf 'Hello from Student: 374383\n' > /mephi-web/index.html
+   52  chmod 755 /mephi-web
+   53  chmod 644 /mephi-web/index.html
+   54  semanage fcontext -a -t httpd_sys_content_t '/mephi-web(/.*)?'
+   55  restorecon -RFv /mephi-web
+   56  # Back up vendor config locally, then use one explicit default server.
+   57  cp -a /etc/nginx/nginx.conf /root/nginx.conf.vendor
+   58  cat > /etc/nginx/nginx.conf <<'NGINX'
+   59  user nginx;
+   60  worker_processes auto;
+   61  error_log /var/log/nginx/error.log;
+   62  pid /run/nginx.pid;
+   63  include /usr/share/nginx/modules/*.conf;
+   64  events { worker_connections 1024; }
+   65  http {
+   66      include /etc/nginx/mime.types;
+   67      default_type application/octet-stream;
+   68      access_log /var/log/nginx/access.log;
+   69      sendfile on;
+   70      server {
+   71          listen 80 default_server;
+   72          listen [::]:80 default_server;
+   73          server_name mephi-2026.domain.local localhost;
+   74          root /mephi-web;
+   75          index index.html;
+   76          location / { try_files $uri $uri/ =404; }
+   77      }
+   78  }
+   79  NGINX
+   80  mkdir -p /etc/systemd/system/nginx.service.d
+   81  printf '[Unit]\nRequiresMountsFor=/mephi-web\n' > /etc/systemd/system/nginx.service.d/mephi-mount.conf
+   82  nginx -t
+   83  systemctl daemon-reload
+   84  systemctl enable --now nginx
+   85  firewall-cmd --permanent --add-service=http
+   86  firewall-cmd --reload
+   87  journalctl -u nginx -b --no-pager > journalctl.out
+   88  # The login PAM service controls local consoles, including ttyAMA0.
+   89  cp -a /etc/pam.d/login /root/pam-login.original
+   90  sed -i '1a account required pam_access.so accessfile=/etc/security/mephi-console.conf' /etc/pam.d/login
+   91  printf '# Local console logins only; included by /etc/pam.d/login.\n- : (curators) : ALL\n+ : ALL : ALL\n' > /etc/security/mephi-console.conf
+   92  # Password quality is evaluated by pam_pwquality in the password stack.
+   93  cp -a /etc/security/pwquality.conf /root/pwquality.conf.original
+   94  cat >> /etc/security/pwquality.conf <<'PWQUALITY'
+   95  # MEPHI session project: at least 12 actual characters, no length credits.
+   96  minlen = 12
+   97  dcredit = 0
+   98  ucredit = 0
+   99  lcredit = 0
+  100  ocredit = 0
+  101  enforce_for_root
+  102  PWQUALITY
+  103  sed -i -E 's/^PASS_MAX_DAYS[[:space:]]+.*/PASS_MAX_DAYS   90/' /etc/login.defs
+  104  for account in root student user1 user2 user3 curator1 curator2; do chage -M 90 "$account"; done
+  105  chpasswd < /root/mephi-passwords.in
+  106  rm /root/mephi-passwords.in
+  107  stat /data/mephi-2026 > stat.out
+  108  stat /mephi-web >> stat.out
+  109  getenforce > getenforce.out
+  110  curl --fail --silent --show-error http://localhost > curl.out
+  111  cat curl.out
+  112  dnf history > dnf.out
+  113  history -w
+  114  }
+  115  shopt -s lithist
+  116  set -e
+  117  {
+  118  export LC_ALL=C.UTF-8
+  119  cd /root/mephi-results
+  120  sed -i '/^http {/a\    types_hash_max_size 4096;' /etc/nginx/nginx.conf
+  121  nginx -t
+  122  systemctl reload nginx
+  123  systemctl enable --now firewalld
+  124  firewall-cmd --permanent --add-service=http
+  125  firewall-cmd --reload
+  126  journalctl -u nginx -b --no-pager > journalctl.out
+  127  # The login PAM service controls local consoles, including ttyAMA0.
+  128  cp -a /etc/pam.d/login /root/pam-login.original
+  129  sed -i '1a account required pam_access.so accessfile=/etc/security/mephi-console.conf' /etc/pam.d/login
+  130  printf '# Local console logins only; included by /etc/pam.d/login.\n- : (curators) : ALL\n+ : ALL : ALL\n' > /etc/security/mephi-console.conf
+  131  # Password quality is evaluated by pam_pwquality in the password stack.
+  132  cp -a /etc/security/pwquality.conf /root/pwquality.conf.original
+  133  cat >> /etc/security/pwquality.conf <<'PWQUALITY'
+  134  # MEPHI session project: at least 12 actual characters, no length credits.
+  135  minlen = 12
+  136  dcredit = 0
+  137  ucredit = 0
+  138  lcredit = 0
+  139  ocredit = 0
+  140  enforce_for_root
+  141  PWQUALITY
+  142  sed -i -E 's/^PASS_MAX_DAYS[[:space:]]+.*/PASS_MAX_DAYS   90/' /etc/login.defs
+  143  for account in root student user1 user2 user3 curator1 curator2; do chage -M 90 "$account"; done
+  144  chpasswd < /root/mephi-passwords.in
+  145  rm /root/mephi-passwords.in
+  146  stat /data/mephi-2026 > stat.out
+  147  stat /mephi-web >> stat.out
+  148  getenforce > getenforce.out
+  149  curl --fail --silent --show-error http://localhost > curl.out
+  150  cat curl.out
+  151  dnf history > dnf.out
+  152  history -w
+  153  }
+  154  date -Is; chage -l student; awk -F: '$1=="student" {print $1,$3,$4,$5,$6,$7,$8}' /etc/shadow
+  155  chage -d "$(date +%F)" student
+  156  chage -l student
+  157  history -w
+  158  /root/verify.sh
+  159  {
+  160  cd /root/mephi-results
+  161  if printf '%s\n' 'A8z!k2P#r4X' 'A8z!k2P#r4X' 'A8z!k2P#r4X' | setsid timeout 15 pamtester passwd user1 chauthtok > password-rejection.out 2>&1; then
+  162    echo 'FAIL: short password accepted'
+  163  else
+  164    result=$?
+  165    echo "PAM rejection exit status: $result" >> password-rejection.out
+  166    cat password-rejection.out
+  167  fi
+  168  }
+  169  {
+  170  cat /proc/sys/kernel/random/boot_id > /root/mephi-pre-reboot-id
+  171  history -w
+  172  history > /root/mephi-results/history.out
+  173  systemctl reboot
+  174  }
+  175  shopt -s lithist
+  176  set -e
+  177  {
+  178  export LC_ALL=C.UTF-8
+  179  cd /root/mephi-results
+  180  sed -i '/^http {/a\    types_hash_max_size 4096;' /etc/nginx/nginx.conf
+  181  nginx -t
+  182  systemctl reload nginx
+  183  systemctl enable --now firewalld
+  184  firewall-cmd --permanent --add-service=http
+  185  firewall-cmd --reload
+  186  journalctl -u nginx -b --no-pager > journalctl.out
+  187  # The login PAM service controls local consoles, including ttyAMA0.
+  188  cp -a /etc/pam.d/login /root/pam-login.original
+  189  sed -i '1a account required pam_access.so accessfile=/etc/security/mephi-console.conf' /etc/pam.d/login
+  190  printf '# Local console logins only; included by /etc/pam.d/login.\n- : (curators) : ALL\n+ : ALL : ALL\n' > /etc/security/mephi-console.conf
+  191  # Password quality is evaluated by pam_pwquality in the password stack.
+  192  cp -a /etc/security/pwquality.conf /root/pwquality.conf.original
+  193  cat >> /etc/security/pwquality.conf <<'PWQUALITY'
+  194  # MEPHI session project: at least 12 actual characters, no length credits.
+  195  minlen = 12
+  196  dcredit = 0
+  197  ucredit = 0
+  198  lcredit = 0
+  199  ocredit = 0
+  200  enforce_for_root
+  201  PWQUALITY
+  202  sed -i -E 's/^PASS_MAX_DAYS[[:space:]]+.*/PASS_MAX_DAYS   90/' /etc/login.defs
+  203  for account in root student user1 user2 user3 curator1 curator2; do chage -M 90 "$account"; done
+  204  chpasswd < /root/mephi-passwords.in
+  205  rm /root/mephi-passwords.in
+  206  stat /data/mephi-2026 > stat.out
+  207  stat /mephi-web >> stat.out
+  208  getenforce > getenforce.out
+  209  curl --fail --silent --show-error http://localhost > curl.out
+  210  cat curl.out
+  211  dnf history > dnf.out
+  212  history -w
+  213  }
+  214  date -Is; chage -l student; awk -F: '$1=="student" {print $1,$3,$4,$5,$6,$7,$8}' /etc/shadow
+  215  chage -d "$(date +%F)" student
+  216  chage -l student
+  217  history -w
+  218  /root/verify.sh
+  219  {
+  220  cd /root/mephi-results
+  221  if printf '%s\n' 'A8z!k2P#r4X' 'A8z!k2P#r4X' 'A8z!k2P#r4X' | setsid timeout 15 pamtester passwd user1 chauthtok > password-rejection.out 2>&1; then
+  222    echo 'FAIL: short password accepted'
+  223  else
+  224    result=$?
+  225    echo "PAM rejection exit status: $result" >> password-rejection.out
+  226    cat password-rejection.out
+  227  fi
+  228  }
+  229  {
+  230  cat /proc/sys/kernel/random/boot_id > /root/mephi-pre-reboot-id
+  231  history -w
+  232  history > /root/mephi-results/history.out
+  233  systemctl reboot
+  234  }
+  235  shopt -s lithist
+  236  set -e
+  237  {
+export LC_ALL=C.UTF-8
+/root/check-reboot.sh
+cat /root/mephi-results/reboot-check.out
+/root/collect.sh
+history -w
+history > /root/mephi-results/history.out
+}
+  238  {
+cd /root/mephi-results
+dnf history info 3 > update-details.out
+cat update-details.out | tail -25
+getcap /usr/sbin/tcpdump > getcap.out
+readlink -f /sbin/tcpdump
+history -w
+history > history.out
+}
+  239  {
+cd /root/mephi-results
+head -16 update-details.out
+restorecon -nv /etc/passwd /mephi-web /mephi-web/index.html > selinux-cache-check.out 2>&1
+matchpathcon -V /mephi-web /mephi-web/index.html >> selinux-cache-check.out 2>&1
+cat selinux-cache-check.out
+history -w
+history > history.out
+}
+  240  {
+TERM=xterm clear > /dev/ttyAMA0
+bash -x -c 'grep "^PRETTY_NAME=" /etc/os-release; hostname; getenforce; curl -sS http://localhost' > /dev/ttyAMA0 2>&1
+history -w
+history > /root/mephi-results/history.out
+}

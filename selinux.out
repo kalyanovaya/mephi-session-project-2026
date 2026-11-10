@@ -1,0 +1,22 @@
+Enforcing
+SELinux status:                 enabled
+SELinuxfs mount:                /sys/fs/selinux
+SELinux root directory:         /etc/selinux
+Loaded policy name:             targeted
+Current mode:                   enforcing
+Mode from config file:          enforcing
+Policy MLS status:              enabled
+Policy deny_unknown status:     allowed
+Memory protection checking:     actual (secure)
+Max kernel policy version:      33
+system_u:system_r:httpd_t:s0        572 nginx
+system_u:system_r:httpd_t:s0        573 nginx
+system_u:system_r:httpd_t:s0        574 nginx
+SELinux fcontext                                   type               Context
+
+/mephi-web(/.*)?                                   all files          system_u:object_r:httpd_sys_content_t:s0 
+      unconfined_u:object_r:default_t:s0 /data/mephi-2026
+system_u:object_r:httpd_sys_content_t:s0 /mephi-web
+system_u:object_r:httpd_sys_content_t:s0 /mephi-web/index.html
+/mephi-web verified.
+/mephi-web/index.html verified.

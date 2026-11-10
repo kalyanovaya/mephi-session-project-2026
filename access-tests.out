@@ -1,0 +1,19 @@
+PASS user1 writes user1's new file
+PASS user1 writes user2's new file
+PASS user1 writes user3's new file
+PASS user2 writes user1's new file
+PASS user2 writes user2's new file
+PASS user2 writes user3's new file
+PASS user3 writes user1's new file
+PASS user3 writes user2's new file
+PASS user3 writes user3's new file
+PASS curator1 reads but cannot write user1's new file
+PASS curator1 reads but cannot write user2's new file
+PASS curator1 reads but cannot write user3's new file
+PASS curator1 cannot create files
+PASS curator2 reads but cannot write user1's new file
+PASS curator2 reads but cannot write user2's new file
+PASS curator2 reads but cannot write user3's new file
+PASS curator2 cannot create files
+PASS nobody has no direct directory access
+PASS student has no direct directory access

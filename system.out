@@ -1,0 +1,31 @@
+2026-11-10T08:48:31+03:00
+NAME="RED OS"
+VERSION="8.0.3"
+PLATFORM_ID="platform:red80"
+ID="redos"
+ID_LIKE="rhel centos fedora"
+VERSION_ID="8.0.3"
+PRETTY_NAME="RED OS 8.0.3 (Standard Server Minimal)"
+ANSI_COLOR="0;31"
+CPE_NAME="cpe:/o:redos:redos:8"
+HOME_URL="https://redos.red-soft.ru"
+BUG_REPORT_URL="https://support.red-soft.ru"
+EDITION="Standard"
+
+Linux mephi-2026.domain.local 6.12.113-1.red80.aarch64 #1 SMP Wed Oct 21 15:03:18 MSK 2026 aarch64 aarch64 aarch64 GNU/Linux
+4096
+ Static hostname: mephi-2026.domain.local
+       Icon name: computer-vm
+         Chassis: vm 🖴
+      Machine ID: 85631325dae348739dd52659516eb6fe
+         Boot ID: 590a1eb5a6c24055a7098689498dfdf4
+  Virtualization: qemu
+Operating System: RED OS 8.0.3 (Standard Server Minimal)
+     CPE OS Name: cpe:/o:redos:redos:8
+          Kernel: Linux 6.12.113-1.red80.aarch64
+    Architecture: arm64
+ Hardware Vendor: QEMU
+  Hardware Model: QEMU Virtual Machine
+Firmware Version: 0.0.0
+   Firmware Date: Fri 2015-02-06
+multi-user.target

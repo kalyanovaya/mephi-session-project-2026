@@ -1,0 +1,9 @@
+  File: /sbin/tcpdump
+  Size: 1401472   	Blocks: 2744       IO Block: 4096   regular file
+Device: 253,3	Inode: 407213      Links: 1
+Access: (0755/-rwxr-xr-x)  Uid: (    0/    root)   Gid: (    0/    root)
+Context: system_u:object_r:netutils_exec_t:s0
+Access: 2025-07-30 13:29:54.000000000 +0300
+Modify: 2025-07-30 13:29:54.000000000 +0300
+Change: 2026-11-10 08:45:04.839222468 +0300
+ Birth: 2026-11-10 08:45:04.831222610 +0300

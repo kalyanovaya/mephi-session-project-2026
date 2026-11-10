@@ -1,0 +1,33 @@
+NAME    SIZE TYPE FSTYPE LABEL     MOUNTPOINTS
+zram0   3.8G disk                  [SWAP]
+vda      20G disk                  
+├─vda1  600M part vfat             /boot/efi
+├─vda2    1G part ext4             /boot
+└─vda3 18.4G part ext4             /
+vdb       2G disk                  
+└─vdb1    2G part ext4   MEPHI_WEB /mephi-web
+TARGET     SOURCE    FSTYPE OPTIONS
+/mephi-web /dev/vdb1 ext4   rw,relatime,seclabel
+/dev/vdb1: LABEL="MEPHI_WEB" UUID="34062f78-bf36-43df-8163-2dce0915a774" BLOCK_SIZE="4096" TYPE="ext4" PARTUUID="2002cb48-4d62-314e-8c03-6fb18ba9d72f"
+/
+   [ ] target exists
+   [ ] UUID=2100f9e2-3ce8-41d8-a0d6-bbdf79b17e62 translated to /dev/vda3
+   [ ] source /dev/vda3 exists
+   [ ] FS type is ext4
+/boot
+   [ ] target exists
+   [ ] UUID=3455a7aa-0cd3-438c-8fe8-a011c24d4002 translated to /dev/vda2
+   [ ] source /dev/vda2 exists
+   [ ] FS type is ext4
+/boot/efi
+   [ ] target exists
+   [ ] FS options: uid=0,gid=0,umask=077,shortname=winnt
+   [ ] UUID=AFD0-C23D translated to /dev/vda1
+   [ ] source /dev/vda1 exists
+   [ ] FS type is vfat
+/mephi-web
+   [ ] target exists
+   [ ] LABEL=MEPHI_WEB translated to /dev/vdb1
+   [ ] source /dev/vdb1 exists
+   [ ] FS type is ext4
+Success, no errors or warnings detected

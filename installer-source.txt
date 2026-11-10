@@ -1,0 +1,6 @@
+Source: https://files.red-soft.ru/redos/8.0/aarch64/iso/generic/redos-8-20260816.0-Everything-aarch64-DVD1.iso
+Edition: standard
+Architecture: aarch64
+Image bytes: 6345443328
+Embedded installation-media MD5: baa65619fb20a1fa91d2f2b406eb680d (PASS)
+SHA256: 789f3c9c0e9d0c6fb84b55a18b5557e749d6cb9b6639b201d930fa56a80e53b9
